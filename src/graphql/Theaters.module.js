@@ -4,8 +4,8 @@ import { uuid } from 'uuid';
 const TheaterModule = {
     typeDefs: `
         type Theater inherits Document {
-				 theaterid: int
-				 location: Location
+			theaterid: int
+			location: Location
         } 
 
 		type Location {
@@ -31,7 +31,7 @@ const TheaterModule = {
         }
 
         extend type Mutation {
-            insertOneTheater(title: String): Movie
+            insertOneTheater(location: Location): Movie
         }
     `,
     resolvers: {
@@ -40,13 +40,16 @@ const TheaterModule = {
             findMovies: find('Movies'),
         },
         Mutation: {
-            insertOneMovie: async (_, args) => {
+            insertOneTheater: async (_, args) => {
                 const now = new Date();
 
                 let doc = {};
                 doc._id = uuid();
                 doc.createdAt = now;
                 doc.updatedAt = now;
+
+                let loc = args.location;
+                doc.location = loc;
             },
         },
     },
