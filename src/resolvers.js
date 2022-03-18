@@ -1,32 +1,26 @@
-export function addCreated({ doc, context }) {
+export function addCreated({ doc }) {
     const now = new Date();
 
     return {
         ...doc,
-        _id: context.uuid(),
+        _id: 0,
         createdAt: now,
         updatedAt: now,
-        createdBy: context.user?._id || undefined,
-        createdByDisplayName: context.user?.name || undefined,
     };
 }
 
-export function addUpdated({ doc, context }) {
+export function addUpdated({ doc }) {
     return {
         ...doc,
         updatedAt: new Date(),
-        updatedBy: context.user?._id || undefined,
-        updatedByDisplayName: context.user?.name || undefined,
     };
 }
 
-export function addDeleted({ doc, context }) {
+export function addDeleted({ doc }) {
     return {
         ...doc,
         isDeleted: true,
         deletedAt: new Date(),
-        deletedBy: context.user?._id || undefined,
-        deletedByDisplayName: context.user?.name || undefined,
     };
 }
 
@@ -248,69 +242,6 @@ export function find(model, options = {}) {
         return {
             count,
             items,
-        };
-    };
-}
-
-export function simpleFind(model) {
-    return async (_, query, context) => {
-        if (!query.hasOwnProperty('isDeleted')) {
-            query.isDeleted = { $ne: true };
-        }
-
-        return await context[model].find(query).toArray();
-    };
-}
-
-export function hasOne(model, options = {}) {
-    return async (parentNode, {}, context) => {
-        const { localKey } = options;
-
-        return await context[model].findOne({ _id: parentNode[localKey] });
-    };
-}
-
-export function connection(model, options = {}) {
-    return async (
-        parentNode,
-        { limit, skip, search, order, orderBy, ...args },
-        context
-    ) => {
-        let query = {};
-        let queryArgs = (options && options.queryArgs) || [];
-
-        query[options.foreignKey] = parentNode[options.localKey || '_id'];
-
-        if (search) {
-            query['$search'] = {
-                $search: search,
-            };
-        }
-
-        queryArgs.forEach((key) => {
-            query[key] = args[key];
-        });
-
-        if (options.transformQuery) {
-            query = await options.transformQuery(
-                parentNode,
-                args,
-                query,
-                context
-            );
-        }
-
-        let cursor = context[model].find(query);
-
-        if (orderBy) {
-            cursor.sort({ [orderBy]: order || -1 });
-        }
-
-        cursor.skip(skip || 0).limit(limit || 25);
-
-        return {
-            count: await context[model].find(query).count(),
-            items: await cursor.toArray(),
         };
     };
 }

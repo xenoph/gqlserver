@@ -21,7 +21,8 @@
         "graphql": "^16.3.0",
         "graphql-s2s": "^0.22.0",
         "graphql-tools": "^8.2.1",
-        "mongodb": "^4.4.1"
+        "mongodb": "^4.4.1",
+        "uuid": "^8.3.2"
     },
     "devDependencies": {
         "@babel/core": "^7.17.7",
