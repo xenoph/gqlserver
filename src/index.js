@@ -27,7 +27,7 @@ const setup = async () => {
 
     server.applyMiddleware({ app, path: '/graphql' });
 
-    await app.listen({ port: 4000 }, () => {
+    await app.listen({ port: process.env.PORT || 4000 }, () => {
         console.log('Apollo Server on http://localhost:4000/graphql');
     });
 };
