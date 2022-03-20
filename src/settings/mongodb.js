@@ -10,7 +10,8 @@ async function setupMongodbClient() {
 
     const db = {
         mongodb,
-        Movies: mongodb.collection('Movies'),
+        Theaters: mongodb.collection('theaters'),
+        Movies: mongodb.collection('movies'),
     };
 
     return db;

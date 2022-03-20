@@ -6,7 +6,8 @@ import { makeExecutableSchema } from 'graphql-tools';
 import { GraphQLScalarType } from 'graphql';
 import merge from 'lodash/merge.js';
 
-import MovieModule from './graphql/Movie.module.js';
+import TheaterModule from './graphql/Theaters.module.js';
+import MoviesModule from './graphql/Movies.module.js';
 
 export const DateTime = new GraphQLScalarType({
     name: 'DateTime',
@@ -75,8 +76,14 @@ const baseResolvers = {
 };
 
 const schema = makeExecutableSchema({
-    typeDefs: transpileSchema(baseTypeDefs + MovieModule.typeDefs + ''),
-    resolvers: merge(baseResolvers, MovieModule.resolvers),
+    typeDefs: transpileSchema(
+        baseTypeDefs + TheaterModule.typeDefs + MoviesModule.typeDefs + ''
+    ),
+    resolvers: merge(
+        baseResolvers,
+        TheaterModule.resolvers,
+        MoviesModule.resolvers
+    ),
 });
 
 export default schema;

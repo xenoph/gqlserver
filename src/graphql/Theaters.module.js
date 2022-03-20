@@ -1,10 +1,9 @@
-import { findOne, find } from '../resolvers.js';
-import { uuid } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 
 const TheaterModule = {
     typeDefs: `
         type Theater inherits Document {
-			theaterid: int
+			theaterId: Int
 			location: Location
         } 
 
@@ -13,43 +12,71 @@ const TheaterModule = {
 			geo: Geo
 		}
 
-		type Address {
+        type Geo {
+            type: String
+            coordinates: [Float]
+        }
+
+        type Address {
+			street1: String
+			city: String
+			state: String
+			zipcode: String
+        }
+
+		input LocationInput {
+			address: AddressInput
+			geo: GeoInput
+		}
+
+		input AddressInput {
 			street1: String
 			city: String
 			state: String
 			zipcode: String
 		}
 
-		type Geo {
+		input GeoInput {
 			type: String
 			coordinates: [Float]
 		}
 
         extend type Query {
-            findOneMovie(_id: ID!): Movie
-            findMovies(): Find<Movie>
+            findTheater(theaterId: Int): Theater
+            findTheaters(): [Theater]
         }
 
         extend type Mutation {
-            insertOneTheater(location: Location): Movie
+            insertOneTheater(location: LocationInput): Theater
         }
     `,
     resolvers: {
         Query: {
-            findOneMovie: findOne('Movies'),
-            findMovies: find('Movies'),
+            findTheater: async (_, args, context) => {
+                let { theaterId } = args;
+                let theater = await context.Theaters.findOne({ theaterId });
+
+                return theater;
+            },
+            findTheaters: async (_, args, context) => {
+                let theaters = await context.Theaters.find().toArray();
+
+                return theaters;
+            },
         },
         Mutation: {
             insertOneTheater: async (_, args) => {
                 const now = new Date();
 
                 let doc = {};
-                doc._id = uuid();
+                doc._id = uuidv4();
                 doc.createdAt = now;
                 doc.updatedAt = now;
 
                 let loc = args.location;
                 doc.location = loc;
+
+                console.log(doc);
             },
         },
     },
