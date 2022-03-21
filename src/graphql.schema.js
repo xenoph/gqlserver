@@ -8,6 +8,8 @@ import merge from 'lodash/merge.js';
 
 import TheaterModule from './graphql/Theaters.module.js';
 import MoviesModule from './graphql/Movies.module.js';
+import CommentsModule from './graphql/Comments.module.js';
+import UsersModule from './graphql/Users.module.js';
 
 export const DateTime = new GraphQLScalarType({
     name: 'DateTime',
@@ -77,12 +79,19 @@ const baseResolvers = {
 
 const schema = makeExecutableSchema({
     typeDefs: transpileSchema(
-        baseTypeDefs + TheaterModule.typeDefs + MoviesModule.typeDefs + ''
+        baseTypeDefs +
+            TheaterModule.typeDefs +
+            MoviesModule.typeDefs +
+            CommentsModule.typeDefs +
+            UsersModule.typeDefs +
+            ''
     ),
     resolvers: merge(
         baseResolvers,
         TheaterModule.resolvers,
-        MoviesModule.resolvers
+        MoviesModule.resolvers,
+        CommentsModule.resolvers,
+        UsersModule.resolvers
     ),
 });
 

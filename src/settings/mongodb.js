@@ -12,6 +12,8 @@ async function setupMongodbClient() {
         mongodb,
         Theaters: mongodb.collection('theaters'),
         Movies: mongodb.collection('movies'),
+        Comments: mongodb.collection('comments'),
+        Users: mongodb.collection('users'),
     };
 
     return db;
