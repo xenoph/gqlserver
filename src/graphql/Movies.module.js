@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 
 const MoviesModule = {
-    typeDefs: `
+    typeDefs: /* GraphQL */ `
         type Movie inherits Document {
             _id: ID
             plot: String
@@ -54,10 +54,19 @@ const MoviesModule = {
 
         extend type Query {
             findAllMovies: [Movie]
+            findMovieByTitle(title: String): Movie
+            findMovieById(id: ID!): Movie
         }
 
         extend type Mutation {
-            insertOneMovie(): Movie
+            insertOneMovie(
+                title: String
+                fullplot: String
+                rated: String
+                released: DateTime
+                genres: [String]
+                cast: [String]
+            ): Movie
         }
     `,
     resolvers: {
@@ -67,20 +76,37 @@ const MoviesModule = {
 
                 return movies;
             },
+            findMovieByTitle: async (_, args, context) => {
+                const { title } = args;
+                let movie = await context.Movies.findOne({ title });
+
+                return movie;
+            },
+            findMovieById: async (_, args, context) => {
+                const { id } = args;
+                let movie = await context.Movies.findOne({ _id: id });
+
+                return movie;
+            },
         },
         Mutation: {
-            insertOneMovie: async (_, args) => {
+            insertOneMovie: async (_, args, context) => {
                 const now = new Date();
 
-                let doc = {};
-                doc._id = uuidv4();
+                let doc = { ...args };
+                const _id = uuidv4();
                 doc.createdAt = now;
                 doc.updatedAt = now;
 
-                let loc = args.location;
-                doc.location = loc;
+                const response = await context.Movies.insertOne({
+                    _id,
+                    ...doc,
+                });
+                if (!response.ops[0]) {
+                    return null;
+                }
 
-                console.log(doc);
+                return response.ops[0];
             },
         },
     },
