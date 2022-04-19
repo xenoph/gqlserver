@@ -30,6 +30,8 @@ const CommentsModule = {
             },
             getAllComments: async (_, __, context) => {
                 let comments = await context.Comments.find().toArray();
+                console.log('Fetching all comments');
+                console.log(comments);
 
                 return comments;
             },
