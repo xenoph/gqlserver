@@ -42,8 +42,9 @@ const TheaterModule = {
 		}
 
         extend type Query {
-            findTheater(theaterId: Int): Theater
-            findTheaters(): [Theater]
+            findTheaterById(theaterId: Int): Theater
+            findTheaterByCity(city: String): [Theater]
+            getAllTheaters: [Theater]
         }
 
         extend type Mutation {
@@ -52,31 +53,50 @@ const TheaterModule = {
     `,
     resolvers: {
         Query: {
-            findTheater: async (_, args, context) => {
+            findTheaterById: async (_, args, context) => {
                 let { theaterId } = args;
                 let theater = await context.Theaters.findOne({ theaterId });
 
                 return theater;
             },
-            findTheaters: async (_, args, context) => {
+            findTheaterByCity: async (_, args, context) => {
+                let { city } = args;
+                const theaters = await context.Theaters.find({
+                    'location.address.city': city,
+                }).toArray();
+
+                return theaters;
+            },
+            getAllTheaters: async (_, args, context) => {
                 let theaters = await context.Theaters.find().toArray();
 
                 return theaters;
             },
         },
         Mutation: {
-            insertOneTheater: async (_, args) => {
+            insertOneTheater: async (_, args, context) => {
+                const { location } = args;
+
                 const now = new Date();
+                const _id = uuidv4();
 
                 let doc = {};
-                doc._id = uuidv4();
                 doc.createdAt = now;
                 doc.updatedAt = now;
 
-                let loc = args.location;
+                let loc = location;
                 doc.location = loc;
 
-                console.log(doc);
+                const response = await context.Theaters.insertOne({
+                    _id,
+                    ...doc,
+                });
+
+                if (!response.ops[0]) {
+                    return null;
+                }
+
+                return response.ops[0];
             },
         },
     },
