@@ -40,18 +40,21 @@ const UsersModule = {
             },
         },
         Mutation: {
-            insertOneUser: async (_, args) => {
-                const { name, email, password } = args;
+            insertOneUser: async (_, args, context) => {
                 const now = new Date();
 
-                let doc = {};
-                doc._id = uuidv4();
+                let doc = { ...args };
+                const _id = uuidv4();
                 doc.createdAt = now;
                 doc.updatedAt = now;
 
-                doc.name = name;
-                doc.email = email;
-                doc.password = password;
+                const response = await context.Users.insertOne({ _id, ...doc });
+
+                if (!response.ops[0]) {
+                    return null;
+                }
+
+                return response.ops[0];
             },
         },
     },

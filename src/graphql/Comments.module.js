@@ -12,7 +12,8 @@ const CommentsModule = {
 		}
 
         extend type Query {
-            findCommentFromUser(name: String): Comment
+            findCommentByUserName(name: String): Comment
+            findCommentByUserEmail(email: String): Comment
             getAllComments: [Comment]
         }
 
@@ -22,7 +23,13 @@ const CommentsModule = {
     `,
     resolvers: {
         Query: {
-            findCommentFromUser: async (_, args, context) => {
+            findCommentByUserEmail: async (_, args, context) => {
+                let { email } = args;
+                const comment = await context.Comments.findOne({ email });
+
+                return comment;
+            },
+            findCommentByUserName: async (_, args, context) => {
                 let { name } = args;
                 let comment = await context.Comments.findOne({ name });
 
@@ -35,18 +42,24 @@ const CommentsModule = {
             },
         },
         Mutation: {
-            insertOneComment: async (_, args) => {
-                const { name, email, text } = args;
+            insertOneComment: async (_, args, context) => {
                 const now = new Date();
+                const _id = uuidv4();
 
-                let doc = {};
-                doc._id = uuidv4();
+                let doc = { ...args };
                 doc.createdAt = now;
                 doc.updatedAt = now;
 
-                doc.name = name;
-                doc.email = email;
-                doc.text = text;
+                const response = await context.Comments.insertOne({
+                    _id,
+                    ...doc,
+                });
+
+                if (!response.ops[0]) {
+                    return null;
+                }
+
+                return response.ops[0];
             },
         },
     },
