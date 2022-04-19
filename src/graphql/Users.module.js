@@ -12,7 +12,7 @@ const UsersModule = {
         extend type Query {
             findUserByName(name: String): User
 			findUserByEmail(email: String): User
-            getAllUsers(): [User]
+            getAllUsers: [User]
         }
 
         extend type Mutation {

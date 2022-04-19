@@ -53,7 +53,7 @@ const MoviesModule = {
         }
 
         extend type Query {
-            findMovies(): [Movie]
+            findAllMovies: [Movie]
         }
 
         extend type Mutation {
