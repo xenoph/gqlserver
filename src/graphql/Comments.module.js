@@ -13,7 +13,7 @@ const CommentsModule = {
 
         extend type Query {
             findCommentFromUser(name: String): Comment
-            getAllComments(): [Comment]
+            getAllComments: [Comment]
         }
 
         extend type Mutation {
