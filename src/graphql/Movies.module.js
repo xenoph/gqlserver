@@ -62,7 +62,7 @@ const MoviesModule = {
     `,
     resolvers: {
         Query: {
-            findMovies: async (_, args, context) => {
+            findAllMovies: async (_, args, context) => {
                 let movies = await context.Movies.find().toArray();
 
                 return movies;
