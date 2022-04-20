@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 
 const CommentsModule = {
-    typeDefs: `
+    typeDefs: /* GraphQL */ `
 		type Comment inherits Document {
 			_id: ID
 			name: String

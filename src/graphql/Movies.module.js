@@ -24,7 +24,7 @@ const MoviesModule = {
 
         type Award {
             wins: Int
-            Nominations: Int
+            nominations: Int
             text: String
         }
 
