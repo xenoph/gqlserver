@@ -66,7 +66,7 @@ const MoviesModule = {
                 released: DateTime
                 genres: [String]
                 cast: [String]
-            ): Movie
+            ): Boolean
         }
     `,
     resolvers: {
@@ -102,11 +102,12 @@ const MoviesModule = {
                     _id,
                     ...doc,
                 });
-                if (!response.ops[0]) {
-                    return null;
+
+                if (!response.acknowledged) {
+                    return false;
                 }
 
-                return response.ops[0];
+                return true;
             },
         },
     },

@@ -18,7 +18,7 @@ const CommentsModule = {
         }
 
         extend type Mutation {
-            insertOneComment(name: String, email: String, text: String): Comment
+            insertOneComment(name: String, email: String, text: String): Boolean
         }
     `,
     resolvers: {
@@ -55,11 +55,11 @@ const CommentsModule = {
                     ...doc,
                 });
 
-                if (!response.ops[0]) {
-                    return null;
+                if (!response.acknowledged) {
+                    return false;
                 }
 
-                return response.ops[0];
+                return true;
             },
         },
     },

@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 
 const TheaterModule = {
-    typeDefs: `
+    typeDefs: /* GraphQL */ `
         type Theater inherits Document {
 			theaterId: Int
 			location: Location
@@ -48,7 +48,7 @@ const TheaterModule = {
         }
 
         extend type Mutation {
-            insertOneTheater(location: LocationInput): Theater
+            insertOneTheater(location: LocationInput): Boolean
         }
     `,
     resolvers: {
@@ -92,11 +92,11 @@ const TheaterModule = {
                     ...doc,
                 });
 
-                if (!response.ops[0]) {
-                    return null;
+                if (!response.acknowledged) {
+                    return false;
                 }
 
-                return response.ops[0];
+                return true;
             },
         },
     },

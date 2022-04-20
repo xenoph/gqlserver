@@ -1,7 +1,7 @@
 import { v4 as uuidv4 } from 'uuid';
 
 const UsersModule = {
-    typeDefs: `
+    typeDefs: /* GraphQL */ `
 		type User inherits Document {
 			_id: ID
 			name: String
@@ -16,7 +16,7 @@ const UsersModule = {
         }
 
         extend type Mutation {
-			insertOneUser(name: String, email: String, password: String): User
+			insertOneUser(name: String, email: String, password: String): Boolean
         }
     `,
     resolvers: {
@@ -50,11 +50,11 @@ const UsersModule = {
 
                 const response = await context.Users.insertOne({ _id, ...doc });
 
-                if (!response.ops[0]) {
-                    return null;
+                if (!response.acknowledged) {
+                    return false;
                 }
 
-                return response.ops[0];
+                return true;
             },
         },
     },
